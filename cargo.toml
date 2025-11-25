@@ -1,0 +1,16 @@
+[package]
+name = "ternary-tools"
+version = "1.2.0"                    # v1.2-gguf-ascended → 1.2.0
+edition = "2021"
+license = "MIT"
+description = "file(1) of the ternary age — balanced-ternary-aware GGUF inspector and debugger in Rust"
+readme = "README.md"
+repository = "https://github.com/ternary-singularity/ternary-tools"
+homepage = "https://github.com/ternary-singularity/ternary-tools"
+documentation = "https://github.com/ternary-singularity/ternary-tools" # or docs.rs later
+keywords = ["gguf", "llm", "cli", "ternary", "quantization"]
+categories = ["command-line-utilities", "development-tools"]
+authors = ["Ternary Singularity <dev@ternary-singularity.org>"] # whatever you prefer
+
+[dependencies]
+clap = { version = "4", features = ["derive"] }
