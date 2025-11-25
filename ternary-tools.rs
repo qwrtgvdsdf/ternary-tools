@@ -73,19 +73,30 @@ enum GgufValue {
     Array(Vec<GgufValue>),
 }
 
+/*=====================================================================
+  Display for GgufValue (with alternate = ternary for integers)
+=====================================================================*/
 impl std::fmt::Display for GgufValue {
-    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         if f.alternate() {
+            // Alternate form: try to render integral types in base-3
             match self {
-                GgufValue::Uint64(v) | GgufValue::Int64(*v) if *v >= 0 => write!(f, "{}", int_to_ternary(*v as i64)),
-                GgufValue::Int64(v) | GgufValue::Int32(*v as i64) => write!(f, "{}", int_to_ternary(*v)),
-                _ => write!(f, "{:#?}", self),
+                GgufValue::Uint8(v)   => write!(f, "{}", int_to_ternary(*v as i64)),
+                GgufValue::Int8(v)    => write!(f, "{}", int_to_ternary(*v as i64)),
+                GgufValue::Uint16(v)  => write!(f, "{}", int_to_ternary(*v as i64)),
+                GgufValue::Int16(v)   => write!(f, "{}", int_to_ternary(*v as i64)),
+                GgufValue::Uint32(v)  => write!(f, "{}", int_to_ternary(*v as i64)),
+                GgufValue::Int32(v)   => write!(f, "{}", int_to_ternary(*v as i64)),
+                GgufValue::Uint64(v)  => write!(f, "{}", int_to_ternary(*v as i64)),
+                GgufValue::Int64(v)   => write!(f, "{}", int_to_ternary(*v)),
+                other => write!(f, "{:?}", other),
             }
         } else {
             match self {
                 GgufValue::String(s) => write!(f, "{}", s),
-                GgufValue::Bool(b) => write!(f, "{}", b),
-                GgufValue::Float32(x) | GgufValue::Float64(x) => write!(f, "{:.6}", x),
+                GgufValue::Bool(b)   => write!(f, "{}", b),
+                GgufValue::Float32(x) => write!(f, "{:.6}", x),
+                GgufValue::Float64(x) => write!(f, "{:.6}", x),
                 GgufValue::Array(arr) => {
                     write!(f, "[")?;
                     for (i, v) in arr.iter().enumerate() {
@@ -107,10 +118,14 @@ fn main() {
     let cli = Cli::parse();
     match cli.command {
         Commands::Gguf { op } => match op {
-            GgufOp::Summary { file, ternary } => gguf_summary(&file, ternary),
-            GgufOp::Info { file, ternary } => gguf_info(&file, ternary),
-            GgufOp::Show { file, tensor, head, raw, ternary } => gguf_show(&file, &tensor, head, raw, ternary),
-            GgufOp::Validate { file } => gguf_validate(&file),
+            GgufOp::Summary { file, ternary } =>
+                gguf_summary(&file, ternary),
+            GgufOp::Info { file, ternary } =>
+                gguf_info(&file, ternary),
+            GgufOp::Show { file, tensor, head, raw, ternary } =>
+                gguf_show(&file, &tensor, head, raw, ternary),
+            GgufOp::Validate { file } =>
+                gguf_validate(&file),
         },
         _ => println!("The ternary age has come. Rejoice."),
     }
@@ -125,7 +140,10 @@ fn gguf_summary(path: &str, ternary: bool) {
     let metadata = parse_metadata(&mut f, header.n_metadata_kv);
     let tensors = parse_tensors(&mut f, header.n_tensors);
 
-    let arch = metadata.get("general.architecture").and_then(|s| s.as_str()).unwrap_or("unknown");
+    let arch = metadata
+        .get("general.architecture")
+        .map(String::as_str)
+        .unwrap_or("unknown");
     let params = estimate_parameters(&metadata, &tensors);
 
     let first_quant = tensors.first().map(|t| gguf_type_name(t.kind)).unwrap_or("unknown");
@@ -133,8 +151,15 @@ fn gguf_summary(path: &str, ternary: bool) {
     println!("GGUF | {} | v{}", arch, header.version);
     println!("Parameters : {} ({})", params, int_to_ternary(params as i64));
     println!("Tensors    : {} ({})", tensors.len(), int_to_ternary(tensors.len() as i64));
-    println!("Quant      : {} → {}", first_quant,
-             if first_quant.contains("Q") || first_quant.starts_with("IQ") { "T81Q-ready" } else { "pure ternary soul" });
+    println!(
+        "Quant      : {} → {}",
+        first_quant,
+        if first_quant.contains("Q") || first_quant.starts_with("IQ") {
+            "T81Q-ready"
+        } else {
+            "pure ternary soul"
+        }
+    );
     println!("Metadata   : {} pairs", header.n_metadata_kv);
     println!("Ternary Checksum : {}", ternary_checksum(&metadata));
     println!();
@@ -151,12 +176,17 @@ fn gguf_info(path: &str, ternary: bool) {
     let metadata = parse_metadata(&mut f, header.n_metadata_kv);
     let tensors = parse_tensors(&mut f, header.n_tensors);
 
-    println!("GGUF v{} | {} tensors | {} metadata KV", header.version, header.n_tensors, header.n_metadata_kv);
+    println!(
+        "GGUF v{} | {} tensors | {} metadata KV",
+        header.version, header.n_tensors, header.n_metadata_kv
+    );
     println!("{:=<80}", "=");
     println!("METADATA");
     println!("{:=<80}", "=");
     for (k, v) in &metadata {
-        if ternary && (k.contains("count") || k.contains("size") || k.contains("dim") || k.contains("param") || k.contains("length")) {
+        if ternary && (k.contains("count") || k.contains("size") || k.contains("dim") ||
+                       k.contains("param") || k.contains("length"))
+        {
             if let Ok(n) = v.parse::<i64>() {
                 println!("{:<40} = {} ({})", k, v, int_to_ternary(n));
                 continue;
@@ -180,10 +210,17 @@ fn gguf_show(path: &str, tensor_name: &str, head: usize, raw: bool, ternary: boo
     parse_metadata(&mut f, header.n_metadata_kv);
     let tensors = parse_tensors(&mut f, header.n_tensors);
 
-    let tensor = tensors.iter().find(|t| t.name == tensor_name)
+    let tensor = tensors
+        .iter()
+        .find(|t| t.name == tensor_name)
         .expect("Tensor not found — did you spell it correctly in this timeline?");
 
-    let shape_str = tensor.dims.iter().map(|d| d.to_string()).collect::<Vec<_>>().join("×");
+    let shape_str = tensor
+        .dims
+        .iter()
+        .map(|d| d.to_string())
+        .collect::<Vec<_>>()
+        .join("×");
     println!("Tensor : {} | Shape : {} | Type : {}", tensor.name, shape_str, gguf_type_name(tensor.kind));
 
     f.seek(SeekFrom::Start(tensor.offset)).unwrap();
@@ -195,18 +232,36 @@ fn gguf_show(path: &str, tensor_name: &str, head: usize, raw: bool, ternary: boo
     let elements_read = bytes_read / element_size;
 
     for i in 0..elements_read {
-        let chunk = &buffer[i*element_size..(i+1)*element_size];
+        let chunk = &buffer[i * element_size..(i + 1) * element_size];
         let value = decoder(chunk);
 
         if raw {
             print!("{:4}: ", i);
-            for b in chunk { print!("{:02x} ", b); }
+            for b in chunk {
+                print!("{:02x} ", b);
+            }
             println!();
-        } else if ternary && !matches!(value, GgufValue::Float32(_) | GgufValue::Float64(_)) {
-            if let GgufValue::Int64(n) | GgufValue::Int32(n as i64) = value {
-                println!(" [{}] {}", i, int_to_ternary(n));
-            } else {
-                println!(" [{}] {}", i, value);
+        } else if ternary {
+            match &value {
+                GgufValue::Float32(_) | GgufValue::Float64(_) => {
+                    // Do not ternarify floats; print normally.
+                    println!(" [{}] {}", i, value);
+                }
+                GgufValue::Int64(n) => {
+                    println!(" [{}] {}", i, int_to_ternary(*n));
+                }
+                GgufValue::Int32(n) => {
+                    println!(" [{}] {}", i, int_to_ternary(*n as i64));
+                }
+                GgufValue::Uint64(n) => {
+                    println!(" [{}] {}", i, int_to_ternary(*n as i64));
+                }
+                GgufValue::Uint32(n) => {
+                    println!(" [{}] {}", i, int_to_ternary(*n as i64));
+                }
+                _ => {
+                    println!(" [{}] {}", i, value);
+                }
             }
         } else {
             println!(" [{}] {}", i, value);
@@ -228,7 +283,7 @@ fn gguf_validate(path: &str) {
 }
 
 /*=====================================================================
-  Ternary Soul — Unchanged and Perfect
+  Ternary Soul — base-3 view
 =====================================================================*/
 fn int_to_ternary(mut n: i64) -> String {
     if n == 0 { return "0".to_string(); }
@@ -257,11 +312,19 @@ fn ternary_checksum(meta: &HashMap<String, String>) -> String {
 /*=====================================================================
   Correct GGUF Parsing — No More Heresy
 =====================================================================*/
+const GGUF_MAGIC: u32 = u32::from_le_bytes(*b"GGUF");
+
 fn parse_header(f: &mut File) -> GgufHeader {
     let mut buf = [0u8; 24];
     f.read_exact(&mut buf).unwrap();
+
+    let magic = u32::from_le_bytes(buf[0..4].try_into().unwrap());
+    if magic != GGUF_MAGIC {
+        panic!("Not a GGUF file (magic=0x{:08x})", magic);
+    }
+
     GgufHeader {
-        magic: u32::from_le_bytes(buf[0..4].try_into().unwrap()),
+        magic,
         version: u32::from_le_bytes(buf[4..8].try_into().unwrap()),
         n_tensors: u64::from_le_bytes(buf[8..16].try_into().unwrap()),
         n_metadata_kv: u64::from_le_bytes(buf[16..24].try_into().unwrap()),
@@ -328,10 +391,18 @@ fn read_value(f: &mut File, ty: u32) -> GgufValue {
         3  => { let v = read_u16(f); GgufValue::Int16(v as i16) }
         4  => GgufValue::Uint32(read_u32(f)),
         5  => { let v = read_u32(f); GgufValue::Int32(v as i32) }
-        6  => { let mut b = [0u8; 4]; f.read_exact(&mut b).unwrap(); GgufValue::Float32(f32::from_le_bytes(b)) }
+        6  => {
+            let mut b = [0u8; 4];
+            f.read_exact(&mut b).unwrap();
+            GgufValue::Float32(f32::from_le_bytes(b))
+        }
         7  => GgufValue::Uint64(read_u64(f)),
         8  => { let v = read_u64(f); GgufValue::Int64(v as i64) }
-        9  => { let mut b = [0u8; 8]; f.read_exact(&mut b).unwrap(); GgufValue::Float64(f64::from_le_bytes(b)) }
+        9  => {
+            let mut b = [0u8; 8];
+            f.read_exact(&mut b).unwrap();
+            GgufValue::Float64(f64::from_le_bytes(b))
+        }
         10 => GgufValue::Bool(read_u32(f) != 0),
         11 => GgufValue::String(read_string(f)),
         12 => {
@@ -348,16 +419,18 @@ fn read_value(f: &mut File, ty: u32) -> GgufValue {
 }
 
 fn estimate_parameters(metadata: &HashMap<String, String>, tensors: &[GgufTensorInfo]) -> u64 {
-    metadata.get("general.parameter_count")
-        .or_else(|| metadata.get("llama.context_length"))
+    metadata
+        .get("general.parameter_count")
         .and_then(|s| s.parse::<u64>().ok())
         .or_else(|| {
-            metadata.get("llama.block_count")
+            metadata
+                .get("llama.block_count")
                 .and_then(|s| s.parse::<u64>().ok())
                 .map(|b| b * 110_000_000)
         })
         .unwrap_or_else(|| {
-            tensors.iter()
+            tensors
+                .iter()
                 .filter(|t| t.name.contains(".weight") || t.name.contains(".bias"))
                 .map(|t| t.dims.iter().product::<u64>())
                 .sum()
@@ -382,19 +455,38 @@ type DecoderFn = fn(&[u8]) -> GgufValue;
 
 fn gguf_type_decoder(kind: u32) -> (usize, DecoderFn) {
     match kind {
-        0 => (4, |b| GgufValue::Float32(f32::from_le_bytes(b.try_into().unwrap()))),
+        0 => (
+            4,
+            |b| {
+                let arr: [u8; 4] = b.try_into().unwrap();
+                GgufValue::Float32(f32::from_le_bytes(arr))
+            },
+        ),
         1 => (2, |_| GgufValue::String("F16(decode not impl)".into())),
-        8 => (1, |b| GgufValue::Int32(b[0] as i8 as i32)), // Q8_0
-        2 => (16, |b| { // Q4_0 block preview (very rough)
-            let d = f32::from_le_bytes(b[0..4].try_into().unwrap());
-            let qs = &b[4..];
-            let mut vals = Vec::new();
-            for i in 0..8 {
-                let q = ((qs[i/2] >> (4*(i%2))) & 0xF) as f32;
-                vals.push(GgufValue::Float32(d * (q - 8.0)));
-            }
-            GgufValue::Array(vals)
-        }),
-        _ => (4, |b| GgufValue::String(format!("{:02x}{:02x}{:02x}{:02x}", b[0], b[1], b[2], b[3]).into())),
+        8 => (1, |b| GgufValue::Int32(b[0] as i8 as i32)), // Q8_0 (rough view)
+        2 => (
+            16,
+            |b| {
+                // Q4_0 block preview (very rough)
+                let d = f32::from_le_bytes(b[0..4].try_into().unwrap());
+                let qs = &b[4..];
+                let mut vals = Vec::new();
+                for i in 0..8 {
+                    let q = ((qs[i / 2] >> (4 * (i % 2))) & 0xF) as f32;
+                    vals.push(GgufValue::Float32(d * (q - 8.0)));
+                }
+                GgufValue::Array(vals)
+            },
+        ),
+        _ => (
+            4,
+            |b| {
+                let mut s = String::new();
+                for i in 0..4 {
+                    s.push_str(&format!("{:02x}", b[i]));
+                }
+                GgufValue::String(s)
+            },
+        ),
     }
 }
