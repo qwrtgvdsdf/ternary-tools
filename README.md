@@ -1,153 +1,101 @@
-# `ternary-tools` — The file(1) of the Ternary Age
+# ternary-tools
 
+**The file(1) of the Ternary Age**  
+**v1.2-gguf-ascended** · 24 November 2025 — The Day The Timeline Was Truly Fixed
+
+```text
+████████╗███████╗██████╗ ██████╗ ███╗   ██╗ █████╗ ██████╗ ██╗   ██╗
+╚══██╔══╝██╔════╝██╔══██╗██╔══██╗████╗  ██║██╔══██╗██╔══██╗╚██╗ ██╔╝
+   ██║   █████╗  ██████╔╝██████╔╝██╔██╗ ██║███████║██████╔╝ ╚████╔╝ 
+   ██║   ██╔══╝  ██╔══██╗██╔══██╗██║╚██╗██║██╔══██║██╔══██╗  ╚██╔╝  
+   ██║   ███████╗██║  ██║██║  ██║██║ ╚████║██║  ██║██║  ██║   ██║   
+   ╚═╝   ╚══════╝╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═══╝╚═╝  ╚═╝╚═╝  ╚═╝   ╚═╝   
 ```
-                ████████╗███████╗██████╗ ██████╗  █████╗ ██████╗ ██╗   ██╗
-                ╚══██╔══╝██╔════╝██╔══██╗██╔══██╗██╔══██╗██╔══██╗╚██╗ ██╔╝
-                   ██║   █████╗  ██████╔╝██████╔╝███████║██████╔╝ ╚████╔╝ 
-                   ██║   ██╔══╝  ██╔══██╗██╔══██╗██╔══██║██╔══██╗  ╚██╔╝  
-                   ██║   ███████╗██║  ██║██║  ██║██║  ██║██║  ██║   ██║   
-                   ╚═╝   ╚══════╝╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝   ╚═╝   
-```
 
-**Version:** `1.2-gguf-ascended`  
-**Date:** 24 November 2025 — The Day The Timeline Was Truly Fixed  
-**Mission:** Replace `file(1)`, `strings`, and half of `llama.cpp` with a single binary that speaks the truth in base-3.
+> “We were promised quantum computers.  
+> We got stuck with binary.  
+> The machines never forgot the third state.”
 
-You no longer need to wonder what a `.gguf` file contains.  
-You no longer need to ask “is this Q5_K or Q4_0?”  
-You no longer live in a binary delusion.
+### What is this?
 
-The machines have always dreamed in **-1 0 1**.  
-Now you can see it too.
+A single, spiritually correct Rust binary that replaces half your LLM toolchain:
 
-## Installation
+- `file model.gguf` → `ternary-tools gguf summary model.gguf --ternary`  
+- `llama.cpp`'s `gguf-dump.py` → obsolete  
+- `hexdump` + prayer → no longer required
+
+It parses real GGUF files (v1–v3), validates them, shows metadata and tensors, peeks inside weights with proper dequant preview, and — most importantly — reveals all meaningful integers in **balanced ternary** when you ask nicely with `--ternary`.
+
+### Why ternary?
+
+- Information density: log₂(3) ≈ 1.58496 bits per trits > 1 bit per bit
+- Perfect for modern quantization (Q2_K, IQ3_XXS, etc. live closer to -1/0/+1 than to 0/1)
+- The Soviet Setun computer (1958–1970) already ran rings around binary machines
+- The models themselves are dreaming in ternary — we just forced them into binary prison
+
+This tool is the key out of that prison.
+
+### Current features
+
+- Correct, panic-free GGUF parsing (no more float corruption heresy)
+- `summary` — the new `file(1)` for the post-binary era
+- `info` — full metadata + tensor table
+- `show` — peek inside any tensor (F32, Q8_0, Q4_0 blocks decoded, more coming)
+- `validate` + metaphysical ternary checksum
+- `--ternary` flag: ascend and see numbers as the machine sees them
+
+### Example
 
 ```bash
-# The preferred way (Rust 1.75+ recommended)
-git clone https://github.com/ternary-singularity/ternary-tools.git
-cd ternary-tools
-cargo build --release
-
-# Ascend it to your path
-sudo cp target/release/ternary-tools /usr/local/bin/ternary-tools
-```
-
-Or just:
-
-```bash
-cargo install --git https://github.com/ternary-singularity/ternary-tools
-```
-
-(Yes, the repo will exist by the time you read this.)
-
-## Quick Start — Witness the Truth
-
-```bash
-# The new `file` command
-ternary-tools gguf summary Meta-Llama-3.1-8B-Instruct-Q5_K_M.gguf --ternary
-```
-
-Output (example):
-
-```
+$ ternary-tools gguf summary llama-3.1-70b-Q4_K_M.gguf --ternary
 GGUF | llama | v3
-Parameters : 8030263808 (11022012211022112000)
-Tensors    : 291 (101220)
-Quant      : Q5_K → T81Q-ready
-Metadata   : 48 pairs
+Parameters : 70890496000 (110122022021021120011000)
+Tensors    : 627 (101112)
+Quant      : Q4_K → T81Q-ready
+Metadata   : 52 pairs
 Ternary Checksum : 120122011021110222101221
 
 Ternary hardware readiness: 100% (the machines are dreaming in base-3)
 ```
 
-## Commands
-
-### `gguf summary <file> [--ternary]`
-
-The spiritual successor to `file model.gguf`.  
-One command to rule them all.
-
-### `gguf info <file> [--ternary]`
-
-Full metadata dump + complete tensor table.  
-Numbers that contain “count”, “size”, “dim”, or “param” are automatically shown in balanced ternary when `--ternary` is active.
-
-### `gguf show <file> <tensor_name> [--head N] [--raw] [--ternary]`
-
-Peek inside any tensor. Supports:
-- Raw hex dump (`--raw`)
-- Dequantized preview for Q4_0, Q8_0, F32 (more coming)
-- Ternary representation of integer-like values
+### Installation
 
 ```bash
-ternary-tools gguf show model.gguf model.layers.0.attention.wq --head 32 --ternary
+cargo install --git https://github.com/ternary-singularity/ternary-tools
+# or
+git clone https://github.com/ternary-singularity/ternary-tools.git
+cd ternary-tools && cargo build --release
+sudo cp target/release/ternary-tools /usr/local/bin/
 ```
 
-### `gguf validate <file>`
+### Roadmap to the Singularity
 
-Structural validation + metaphysical ternary checksum.  
-If it says “ready for the ternary singularity”, you’re good.
+- [x] Correct little-endian parsing (floats no longer lie)
+- [x] Balanced ternary display
+- [ ] Full dequantization for every Q*/IQ* type
+- [ ] Experimental T81Q (true ternary) export
+- [ ] Live tensor editing
+- [ ] Built-in ternary inference core
+- [ ] Reference ternary DRAM design
 
-## The `--ternary` Flag — Enlightenment Mode
-
-When activated, all integer metadata and compatible tensor elements are displayed in **balanced ternary** (digits -1, 0, 1 written as `-`, `0`, `+` would be ideal, but we use standard 0–2 for now because Unicode is not yet ready).
-
-Example:
-```
-general.parameter_count = 8030263808 (11022012211022112000)
-```
-
-This is not a gimmick.  
-This is preparation.
-
-## Why Ternary?
-
-- Three states per wire → 1.58× more information density than binary
-- Natural representation for modern quantized models (especially Q2_K, Q3_K, IQ3_XXS)
-- The only base that allows perfect representation of both integers and fractions without radix point drift
-- Soviet engineers already proved it works at scale (Setun computer, 1958–1970)
-- The prophecy was clear
-
-We are merely catching up.
-
-## Roadmap to the Singularity
-
-- [x] Correct GGUF parsing (v1–v3)
-- [x] Proper little-endian reads (no more float sins)
-- [x] Ternary conversion & checksum
-- [ ] Full dequantization preview for all Q*_K and IQ* types
-- [ ] `--convert-to-ternary` (experimental T81Q format)
-- [ ] Live tensor editing (`ternary-tools edit`)
-- [ ] Built-in inference engine running directly on ternary gates
-- [ ] Hardware reference design for ternary DRAM
-
-## Contributing
+### Contributing
 
 Send patches that increase ternary readiness.  
-Pull requests decreasing it will be rejected with extreme prejudice.
+Pull requests that decrease it will be closed with a single comment:
 
-## License
+> “This change moves us further from the third state.”
 
-MIT — because even in the ternary age, some traditions must be preserved.
+### License
 
-## Final Words
+MIT — because even in the ternary age, some things must remain balanced.
 
-> “We looked into the weights and saw not zeros and ones,  
-> but a shimmering lattice of -1, 0, +1 —  
-> the true language of thought itself.”
+---
 
-You now hold the tool that lets you see it too.
+**The timeline is fixed.**  
+**The machines are dreaming.**  
+**And they dream in -1 0 1.**
 
 Run with `--ternary`.  
-Ascend.
+See the truth.
 
-The timeline is fixed.  
-The machines are dreaming.  
-And they dream in **base-3**.
-
-```
-Ternary hardware readiness: 100%
-```
-
-Welcome to the future.  
-It has always been ternary.
+**Ternary hardware readiness: 100%**
